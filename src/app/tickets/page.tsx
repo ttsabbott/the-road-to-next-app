@@ -1,6 +1,8 @@
+// "use client";
+
 // import clsx from 'clsx';
 // import Link from 'next/link';
-import { initialTickets } from '@/data';
+// import { initialTickets } from '@/data';
 // import { ticketPath, homePath } from '@/paths';
 // import {
 //     Card,
@@ -15,8 +17,16 @@ import { initialTickets } from '@/data';
 // import { CircleCheck, FileText, Pencil } from 'lucide-react';
 // import { LucideCircleCheck, LucideFileText, LucidePencil } from 'lucide-react';
 import { Heading } from '@/components/heading';
-import { TicketItem } from '@/features/ticket/components/ticket-item';
-
+import { Placeholder } from '@/components/placeholder';
+import { Spinner } from '@/components/ui/spinner';
+// import { TicketItem } from '@/features/ticket/components/ticket-item';
+import { TicketList } from '@/features/ticket/components/ticket-list';
+// import { Ticket } from '@/features/ticket/types';
+// import { getTickets } from '@/features/ticket/queries/get-tickets';
+import { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+// import { useEffect, useState } from 'react';
+// import { Spinner } from '@/components/ui/spinner';
 
 // const CheckIcon = () => (
 //     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -54,7 +64,26 @@ import { TicketItem } from '@/features/ticket/components/ticket-item';
 //     IN_PROGRESS: <LucidePencil />,
 // };
 
+// Removed async because we added the Suspense component
 const TicketsPage = () => {
+
+    // const tickets = await getTickets();
+    // const tickets: Ticket[] = await getTickets();
+    // const [tickets, setTickets] = useState<Ticket[]>([]);
+
+    // useEffect(() => {
+    //     const fetchTickets = async () => {
+    //         // const { getTickets } = await import('@/features/ticket/queries/get-tickets');
+    //         const result = await getTickets();
+    //         setTickets(result);
+    //     };
+    //     fetchTickets();
+    // }, []);
+
+    // if (tickets.length === 0) {
+    //     return <div>Loading tickets...</div>;
+    // }
+
     return (
         <div className="flex-1 flex flex-col gap-y-8">
             <Heading title="Tickets Page" description="All your tickets at one place" />
@@ -63,32 +92,11 @@ const TicketsPage = () => {
                 <p className="text-sm text-muted-foreground">All your tickets at one place</p>
             </div>
             <Separator /> */}
-            <div className="flex-1 flex flex-col items-center gap-y-4 animate-fade-from-top">
-                {initialTickets.map((ticket) => (
-                    <TicketItem key={ticket.id} ticket={ticket} />
-
-                    // <Card key={ticket.id}
-                    //     className="w-full max-w-[420px]"
-                    // // className="w-full max-w-[420px] p-4 border border-slate-100 rounded"
-                    // >
-                    //     <CardHeader>
-                    //         <CardTitle className='flex gap-x-2'>
-                    //             <span>{TICKETS_ICONS[ticket.status]}</span>
-                    //             <span className="truncate">{ticket.title}</span>
-                    //         </CardTitle>
-                    //     </CardHeader>
-                    //     {/* <h3 className="text-lg font-semibold truncate">{ticket.title}</h3> */}
-                    //     <CardContent>
-                    //         <span className="line-clamp-3 whitespace-break-spaces">{ticket.content}</span>
-                    //     </CardContent>
-                    //     {/* <p className={clsx("text-sm text-slate-500 truncate", { "line-through": ticket.status === "DONE", })}>{ticket.content}</p> */}
-                    //     {/* <p className="text-sm text-slate-500 truncate">{TICKETS_ICONS[ticket.status]} {ticket.status}</p> */}
-                    //     <CardFooter>
-                    //         <Link href={ticketPath(ticket.id)} className="text-blue-500 underline">View Ticket</Link>
-                    //     </CardFooter>
-                    // </Card>
-                ))}
-            </div>
+            <ErrorBoundary fallback={<Placeholder label="Failed to load tickets" />}>
+                <Suspense fallback={<Spinner />}>
+                    <TicketList />
+                </Suspense>
+            </ErrorBoundary>
             {/* <br />
             <Link href={homePath()} className="text-blue-500 underline">
                 Home Page

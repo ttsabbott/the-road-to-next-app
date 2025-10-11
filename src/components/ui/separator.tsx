@@ -1,4 +1,10 @@
-"use client";
+// Before I started the "Server Components" section of the course, this file had
+// "use client"; at the top. However, after completing that section, I realized
+// that this component does not need to be a client component, as it does not
+// use any client-side hooks or state. Therefore, I have commented it out.
+// If you find that you need to use client-side features in this component in
+// the future, you can simply uncomment this line.
+// "use client";
 
 import * as React from "react"
 import * as SeparatorPrimitive from "@radix-ui/react-separator"
