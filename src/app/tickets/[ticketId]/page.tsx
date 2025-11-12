@@ -6,6 +6,7 @@
 // import { TICKETS_ICONS } from '@/features/ticket/constants';
 import { TicketItem } from '@/features/ticket/components/ticket-item';
 import { getTicket } from '@/features/ticket/queries/get-ticket';
+// import { getTickets } from '@/features/ticket/queries/get-tickets';
 import { notFound } from "next/navigation";
 
 type TicketPageProps = {
@@ -43,5 +44,13 @@ const TicketPage = async ({ params }: TicketPageProps) => {
     // </div>
   );
 };
+
+// export async function generateStaticParams() {
+//   const tickets = await getTickets();
+//   return tickets.map((ticket) => ({
+//     ticketId: ticket.id,
+//   }));
+//   return [];
+// }
 
 export default TicketPage;

@@ -64,6 +64,9 @@ import { ErrorBoundary } from 'react-error-boundary';
 //     IN_PROGRESS: <LucidePencil />,
 // };
 
+// export const dynamic = 'force-dynamic';
+// export const revalidate = 0; <-- this makes it a dynamic page, > 0 makes it static for that many seconds
+
 // Removed async because we added the Suspense component
 const TicketsPage = () => {
 

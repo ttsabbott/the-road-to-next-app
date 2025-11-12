@@ -1,18 +1,32 @@
+// "use client"; // In order to use event handlers like onClick, we need to mark this component as a client component
+
 import clsx from 'clsx';
 import Link from 'next/link';
 import { ticketPath } from '@/paths';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { TICKETS_ICONS } from '@/features/ticket/constants';
-import type { Ticket } from '@/features/ticket/types';
-import { LucideSquareArrowOutUpRight } from 'lucide-react';
+import { LucideSquareArrowOutUpRight, LucideTrash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+// import type { Ticket } from '@/features/ticket/types';
+import { Ticket } from '@prisma/client';
+// import { use } from 'react';
+// import { prisma } from '@/lib/prisma';
+import { deleteTicket } from '../actions/delete-ticket';
+// import { getTicket } from '../queries/get-ticket';
 
 type TicketItemProps = {
     ticket: Ticket;
     isDetail?: boolean;
 };
 
-const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
+// Note: We really want to make this a server component, but because it has an onClick handler for deleting tickets,
+// we have to make it a client component. One possible solution is to lift the delete logic up to a parent server component
+// and pass down a deleteTicket function as a prop. Another option is to use a form with method="post" and handle the deletion
+// in a server action. For simplicity, we'll keep it as a client component for now.
+const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
+
+    // const ticketPerTicketItem = await getTicket(ticket.id); //params.ticketId);
 
     // This is a test to see where this component is being rendered, either console of browser or console of server
     // because this component is used in both a server component (page.tsx) and a client component (ticket-detail.tsx)
@@ -26,11 +40,47 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
 
     const detailButton = (
         <Button variant="outline" size="icon" asChild>
-            <Link href={ticketPath(ticket.id)}>
+            <Link prefetch href={ticketPath(ticket.id)}>
                 <LucideSquareArrowOutUpRight className="h-4 w-4" />
             </Link>
         </Button>
     );
+
+    // const handleDeleteTicket = async () => {
+    //     await deleteTicket(ticket.id);
+    //     /*
+    //     "use server"; // This will conflict with the "use client" at the top, but is here to demonstrate the concept
+    //     // Implement ticket deletion logic here
+    //     // console.log(`Delete ticket with id: ${ticket.id}`);
+    //     // console.log('Ticket deletion not yet implemented.');
+    //     // TODO : Implement ticket deletion
+    //     alert('Ticket deletion not yet implemented.');
+    //     // However, using prisma here will cause an error because this is a client component
+    //     //  "Error: PrismaClient is unable to be run in the browser."
+    //     //  So this is just for demonstration purposes
+    //     await prisma.ticket.delete({
+    //         where: {
+    //             id: ticket.id,
+    //         },
+    //     });
+    //     */
+    // };
+
+    // const deleteButton = (
+    //     <Button variant="outline" size="icon" onClick={handleDeleteTicket}>
+    //         <LucideTrash className="h-4 w-4" />
+    //     </Button>
+    // );
+
+    // Using a form to call a server action for deleting the ticket, thus making this component a server component!
+    const deleteButton = (
+        <form action={deleteTicket.bind(null, ticket.id)}>
+            <Button variant="outline" size="icon">
+                <LucideTrash className="h-4 w-4" />
+            </Button>
+        </form>
+    );
+
     return (
         <div className={clsx("w-full flex gap-x-1", {
             "max-w-[580px]": isDetail,
@@ -49,11 +99,9 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
                     })}>{ticket.content}</span>
                 </CardContent>
             </Card>
-            {isDetail ? null : (
-                <div className='flex flex-col gap-y-1'>
-                    {detailButton}
-                </div>
-            )}
+            <div className='flex flex-col gap-y-1'>
+                {isDetail ? deleteButton : detailButton}
+            </div>
         </div>
     );
 };
